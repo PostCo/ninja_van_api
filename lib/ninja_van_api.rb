@@ -3,6 +3,8 @@
 require_relative 'ninja_van_api/version'
 
 module NinjaVanAPI
-  class Error < StandardError; end
-  # Your code goes here...
+  autoload :Client, 'ninja_van_api/client'
+  autoload :Error, 'ninja_van_api/error'
+  autoload :UnsupportedCountryCodeError, 'ninja_van_api/error'
+  autoload :AuthenticationError, 'ninja_van_api/error'
 end
