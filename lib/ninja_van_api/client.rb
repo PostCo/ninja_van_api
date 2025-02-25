@@ -31,6 +31,10 @@ module NinjaVanAPI
       end
     end
 
+    def orders
+      @orders ||= OrderResource.new(self)
+    end
+
     private
 
     def validate_country_code
@@ -133,5 +137,6 @@ module NinjaVanAPI
 
       "#{endpoint}/#{country_code.downcase}"
     end
+
   end
 end

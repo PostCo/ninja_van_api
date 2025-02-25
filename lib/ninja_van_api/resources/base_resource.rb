@@ -4,7 +4,7 @@ require 'active_support'
 require 'active_support/core_ext/string'
 
 module NinjaVanAPI
-  class Resource
+  class BaseResource
     attr_reader :client
 
     def initialize(client)
