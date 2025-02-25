@@ -46,8 +46,35 @@ module NinjaVanAPI
       end
     end
 
+    def access_token
+      fetch_access_token if token_expired?
+
+      if defined?(Rails) && Rails.respond_to?(:cache)
+        Rails.cache.read(cache_key)['access_token']
+      else
+        @token_info['access_token']
+      end
+    end
+
+    def refresh_access_token
+      @token_info = nil
+      Rails.cache.delete(cache_key) if defined?(Rails) && Rails.respond_to?(:cache)
+      fetch_access_token
+    end
+
     def fetch_access_token
       endpoint = "#{url_prefix}/2.0/oauth/access_token"
+      response = Faraday.new.post(endpoint) do |req|
+        req.headers['Content-Type'] = 'application/json'
+        req.body = {
+          client_id: @client_id,
+          client_key: @client_key
+        }.to_json
+      end
+
+      raise NinjaVanAPI::AuthenticationError, response.body unless response.success?
+
+      JSON.parse(response.body)['access_token']
 
       response = Faraday.post(endpoint) do |req|
         req.headers['Content-Type'] = 'application/json'
@@ -65,22 +92,40 @@ module NinjaVanAPI
     def access_token
       fetch_access_token if token_expired?
 
-      @token_info['access_token']
+      if defined?(Rails) && Rails.respond_to?(:cache)
+        Rails.cache.read(cache_key)['access_token']
+      else
+        @token_info['access_token']
+      end
     end
 
     def token_expired?
-      return true if @token_info.nil?
+      token_info = if defined?(Rails) && Rails.respond_to?(:cache)
+                    Rails.cache.read(cache_key)
+                  else
+                    @token_info
+                  end
 
-      expired_by = @token_info['created_at'] + @token_info['expires_in']
+      return true if token_info.nil?
 
-      # Add a buffer of 60 seconds
-      Time.now.utc.to_i >= (expired_by - 60)
+      # Add a buffer of 6 minutes
+      Time.now.utc.to_i >= (token_info['expires'] - 360)
     end
 
     def handle_access_token_response(response)
       raise NinjaVanAPI::AuthenticationError unless response.success?
 
-      @token_info = JSON.parse(response.body).merge!({ 'created_at' => Time.now.utc.to_i })
+      token_info = JSON.parse(response.body)
+
+      if defined?(Rails) && Rails.respond_to?(:cache)
+        Rails.cache.write(cache_key, token_info)
+      else
+        @token_info = token_info
+      end
+    end
+
+    def cache_key
+      "ninja_van_api_token_#{@client_id}_#{country_code}"
     end
 
     def url_prefix
