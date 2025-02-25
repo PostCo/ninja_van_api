@@ -16,29 +16,40 @@ And then execute:
 
 ## Usage
 
-### Mounting the Webhook Engine
+### Mounting the Engine
 
-In your Rails application's `config/routes.rb`, mount the webhook engine:
+In your Rails application's `config/routes.rb`, mount the webhook engine. You can mount it multiple times with different country paths. For example:
 
 ```ruby
 Rails.application.routes.draw do
-  mount NinjaVanAPI::Engine => '/ninja_van'
+  # Mount multiple endpoints for different countries
+  mount NinjaVanAPI::Engine => '/ninja_van/my'
+  mount NinjaVanAPI::Engine => '/ninja_van/sg'
+  mount NinjaVanAPI::Engine => '/ninja_van/id'
 end
 ```
 
 ### Configuring Webhooks
 
-Create an initializer in `config/initializers/ninja_van_api.rb`:
+Create an initializer in `config/initializers/ninja_van_api.rb`. When configuring webhook secrets, you'll need to provide a hash where each key is a country code that corresponds to your mounting paths:
 
 ```ruby
 NinjaVanAPI.configure do |config|
   # Set your webhook job class to process incoming webhooks
   config.webhook_job_class = "NinjaVanWebhookJob"
 
-  # Set your webhook secret (obtained from NinjaVan)
-  config.webhook_secret = 'your-webhook-secret'
+  # Set your webhook secrets (obtained from NinjaVan)
+  # The country code in the mounting path (e.g., 'my', 'sg', 'id')
+  # determines which secret is used for verification
+  config.webhook_secrets = {
+    MY: 'your-malaysia-webhook-secret',
+    SG: 'your-singapore-webhook-secret',
+    ID: 'your-indonesia-webhook-secret'
+  }
 end
 ```
+
+Note: The country code from your mounting path (e.g., '/ninja_van/my' uses 'MY') determines which webhook secret is used to verify incoming webhooks. The country codes are case-insensitive.
 
 ### Processing Webhooks
 
@@ -53,7 +64,7 @@ class NinjaVanWebhookJob < ApplicationJob
 end
 ```
 
-The webhook endpoint will be available at `/ninja_van` (or your custom path) and will:
+The webhook endpoints will be available at your specified paths (e.g., `/ninja_van`, `/ninja_van/my`, etc.) and will:
 
 1. Verify the webhook signature using your secret
 2. Enqueue the webhook job with the payload
