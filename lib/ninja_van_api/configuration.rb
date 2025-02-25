@@ -6,11 +6,20 @@
 #
 module NinjaVanAPI
   class Configuration
-    attr_accessor :webhook_job_class, :webhook_secret
+    attr_accessor :webhook_job_class
+    attr_reader :webhook_secrets
 
     def initialize
       @webhook_job_class = nil
-      @webhook_secret = nil
+      @webhook_secrets = {}
+    end
+
+    def webhook_secrets=(secrets)
+      @webhook_secrets = secrets.transform_keys(&:upcase)
+    end
+
+    def get_webhook_secret(country_code)
+      @webhook_secrets[country_code.to_s.upcase]
     end
 
     def webhook_job_class=(job_class)
