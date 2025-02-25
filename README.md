@@ -1,24 +1,62 @@
-# NinjaVanApi
+# NinjaVanAPI
 
-TODO: Delete this and the text below, and describe your gem
-
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/ninja_van_api`. To experiment with that code, run `bin/console` for an interactive prompt.
+A Ruby gem for integrating with NinjaVan's API and handling webhooks in Rails applications.
 
 ## Installation
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
+Add this line to your application's Gemfile:
 
-Install the gem and add to the application's Gemfile by executing:
+```ruby
+gem 'ninja_van_api'
+```
 
-    $ bundle add UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+And then execute:
 
-If bundler is not being used to manage dependencies, install the gem by executing:
-
-    $ gem install UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+    $ bundle install
 
 ## Usage
 
-TODO: Write usage instructions here
+### Mounting the Webhook Engine
+
+In your Rails application's `config/routes.rb`, mount the webhook engine:
+
+```ruby
+Rails.application.routes.draw do
+  mount NinjaVanAPI::Engine => '/ninja_van'
+end
+```
+
+### Configuring Webhooks
+
+Create an initializer in `config/initializers/ninja_van_api.rb`:
+
+```ruby
+NinjaVanAPI.configure do |config|
+  # Set your webhook job class to process incoming webhooks
+  config.webhook_job_class = "NinjaVanWebhookJob"
+
+  # Set your webhook secret (obtained from NinjaVan)
+  config.webhook_secret = 'your-webhook-secret'
+end
+```
+
+### Processing Webhooks
+
+Create a job to process the webhooks:
+
+```ruby
+class NinjaVanWebhookJob < ApplicationJob
+  def perform(payload)
+    # Process the webhook payload
+    # payload contains the webhook data from NinjaVan
+  end
+end
+```
+
+The webhook endpoint will be available at `/ninja_van` (or your custom path) and will:
+
+1. Verify the webhook signature using your secret
+2. Enqueue the webhook job with the payload
 
 ## Development
 
