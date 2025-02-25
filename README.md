@@ -42,9 +42,9 @@ NinjaVanAPI.configure do |config|
   # The country code in the mounting path (e.g., 'my', 'sg', 'id')
   # determines which secret is used for verification
   config.webhook_secrets = {
-    MY: 'your-malaysia-webhook-secret',
-    SG: 'your-singapore-webhook-secret',
-    ID: 'your-indonesia-webhook-secret'
+    my: 'your-malaysia-webhook-secret',
+    sg: 'your-singapore-webhook-secret',
+    id: 'your-indonesia-webhook-secret'
   }
 end
 ```
@@ -64,7 +64,7 @@ class NinjaVanWebhookJob < ApplicationJob
 end
 ```
 
-The webhook endpoints will be available at your specified paths (e.g., `/ninja_van`, `/ninja_van/my`, etc.) and will:
+The webhook endpoints will be available at your specified paths (e.g., `/ninja_van/sg`, `/ninja_van/my`, etc.) and will:
 
 1. Verify the webhook signature using your secret
 2. Enqueue the webhook job with the payload

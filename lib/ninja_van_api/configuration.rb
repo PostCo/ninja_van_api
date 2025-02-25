@@ -15,11 +15,11 @@ module NinjaVanAPI
     end
 
     def webhook_secrets=(secrets)
-      @webhook_secrets = secrets.transform_keys(&:upcase)
+      @webhook_secrets = secrets.transform_keys(&:downcase)
     end
 
     def get_webhook_secret(country_code)
-      @webhook_secrets[country_code.to_s.upcase]
+      @webhook_secrets[country_code.to_s.downcase]
     end
 
     def webhook_job_class=(job_class)
