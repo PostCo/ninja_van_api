@@ -51,6 +51,86 @@ end
 
 Note: The country code from your mounting path (e.g., '/ninja_van/my' uses 'MY') determines which webhook secret is used to verify incoming webhooks. The country codes are case-insensitive.
 
+### Creating Orders
+
+First, initialize the NinjaVan API client:
+
+```ruby
+client = NinjaVanAPI::Client.new(
+  client_id: 'your-client-id',
+  client_secret: 'your-client-secret',
+  test_mode: false # Set to true for sandbox environment
+)
+```
+
+Then, create an order with the following example:
+
+```ruby
+payload = {
+  service_type: "Return",
+  service_level: "Standard",
+  from: {
+    name: "John Doe",
+    phone_number: "+6591234567",
+    email: "john.doe@gmail.com",
+    address: {
+      address1: "Block 123 Tampines Street 11",
+      address2: "#12-345",
+      area: "Tampines",
+      city: "Singapore",
+      state: "Singapore",
+      address_type: "office",
+      country: "SG",
+      postcode: "521123"
+    }
+  },
+  to: {
+    name: "Jane Doe",
+    phone_number: "+6598765432",
+    email: "jane.doe@gmail.com",
+    address: {
+      address1: "Block 456 Jurong West Street 42",
+      address2: "#08-910",
+      area: "Jurong West",
+      city: "Singapore",
+      state: "Singapore",
+      address_type: "home",
+      country: "SG",
+      postcode: "640456"
+    }
+  },
+  parcel_job: {
+    is_pickup_required: true,
+    pickup_service_type: "Scheduled",
+    pickup_service_level: "Standard",
+    pickup_date: "2025-02-26",
+    pickup_timeslot: {
+      start_time: "09:00",
+      end_time: "18:00",
+      timezone: "Asia/Kuala_Lumpur"
+    },
+    delivery_start_date: "2025-02-26",
+    delivery_timeslot: {
+      start_time: "09:00",
+      end_time: "18:00",
+      timezone: "Asia/Kuala_Lumpur"
+    },
+    dimensions: {
+      weight: 1.5
+    },
+    items: [
+      {
+        item_description: "Sample description",
+        quantity: 1,
+        is_dangerous_good: false
+      }
+    ]
+  }
+}
+
+response = client.orders.create(payload)
+```
+
 ### Processing Webhooks
 
 Create a job to process the webhooks:

@@ -4,7 +4,7 @@ RSpec.describe NinjaVanAPI::Client do
   subject do
     NinjaVanAPI::Client.new(
       client_id: ENV['client_id'],
-      client_key: ENV['client_key'],
+      client_secret: ENV['client_secret'],
       country_code: country_code,
       test_mode: test_mode
     )

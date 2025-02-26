@@ -1,34 +1,38 @@
-require 'faraday'
-require 'faraday/net_http'
+require "faraday"
+require "faraday/net_http"
 
 module NinjaVanAPI
   class Client
-    BASE_URL = 'https://api.ninjavan.co'.freeze
-    SANDBOX_BASE_URL = 'https://api-sandbox.ninjavan.co'.freeze
+    BASE_URL = "https://api.ninjavan.co".freeze
+    SANDBOX_BASE_URL = "https://api-sandbox.ninjavan.co".freeze
     SUPPORTED_COUNTRY_CODES = %w[SG MY TH ID VN PH MM]
 
     attr_reader :country_code, :test_mode
 
-    def initialize(client_id:, client_key:, country_code: 'SG', test_mode: false, conn_opts: {})
+    def initialize(client_id:, client_secret:, country_code: "SG", test_mode: false, conn_opts: {})
       @client_id = client_id
-      @client_key = client_key
+      @client_secret = client_secret
       @country_code = country_code
       @test_mode = test_mode
       @conn_opts = conn_opts
+      if defined?(Rails) && Rails.env.development?
+        @token_info = { "access_token" => ENV["NINJAVAN_API_ACCESS_TOKEN"], "expires" => Time.now.utc.to_i + 3600 }
+      end
 
       validate_country_code
     end
 
     def connection
-      @connection ||= Faraday.new do |conn|
-        conn.url_prefix = url_prefix
-        conn.options.merge!(@conn_opts)
-        # access_token will be evaluated on each request using proc
-        conn.request :authorization, :Bearer, -> { access_token }
-        conn.request :json
-        conn.response :json
-        conn.response :raise_error # Raises error on 4xx and 5xx responses
-      end
+      @connection ||=
+        Faraday.new do |conn|
+          conn.url_prefix = url_prefix
+          conn.options.merge!(@conn_opts)
+          # access_token will be evaluated on each request using proc
+          conn.request :authorization, :Bearer, -> { access_token }
+          conn.request :json
+          conn.response :json
+          conn.response :raise_error # Raises error on 4xx and 5xx responses
+        end
     end
 
     def orders
@@ -39,9 +43,8 @@ module NinjaVanAPI
 
     def validate_country_code
       if test_mode
-        if country_code != 'SG'
-          raise NinjaVanAPI::UnsupportedCountryCodeError,
-                "#{country_code} is not supported on test mode"
+        if country_code != "SG"
+          raise NinjaVanAPI::UnsupportedCountryCodeError, "#{country_code} is not supported on test mode"
         end
       else
         unless SUPPORTED_COUNTRY_CODES.include? country_code
@@ -54,9 +57,9 @@ module NinjaVanAPI
       fetch_access_token if token_expired?
 
       if defined?(Rails) && Rails.respond_to?(:cache)
-        Rails.cache.read(cache_key)['access_token']
+        Rails.cache.read(cache_key)["access_token"]
       else
-        @token_info['access_token']
+        @token_info["access_token"]
       end
     end
 
@@ -68,27 +71,28 @@ module NinjaVanAPI
 
     def fetch_access_token
       endpoint = "#{url_prefix}/2.0/oauth/access_token"
-      response = Faraday.new.post(endpoint) do |req|
-        req.headers['Content-Type'] = 'application/json'
-        req.body = {
-          client_id: @client_id,
-          client_key: @client_key
-        }.to_json
-      end
+      response =
+        Faraday
+          .new
+          .post(endpoint) do |req|
+            req.headers["Content-Type"] = "application/json"
+            req.body = {
+              client_id: @client_id,
+              client_secret: @client_secret,
+              grant_type: "client_credentials",
+            }.to_json
+          end
 
       raise NinjaVanAPI::AuthenticationError, response.body unless response.success?
 
-      JSON.parse(response.body)['access_token']
+      JSON.parse(response.body)["access_token"]
 
-      response = Faraday.post(endpoint) do |req|
-        req.headers['Content-Type'] = 'application/json'
-        req.headers['Accept'] = 'application/json'
-        req.body = {
-          client_id: @client_id,
-          client_secret: @client_key,
-          grant_type: 'client_credentials'
-        }.to_json
-      end
+      response =
+        Faraday.post(endpoint) do |req|
+          req.headers["Content-Type"] = "application/json"
+          req.headers["Accept"] = "application/json"
+          req.body = { client_id: @client_id, client_secret: @client_secret, grant_type: "client_credentials" }.to_json
+        end
 
       handle_access_token_response(response)
     end
@@ -97,23 +101,24 @@ module NinjaVanAPI
       fetch_access_token if token_expired?
 
       if defined?(Rails) && Rails.respond_to?(:cache)
-        Rails.cache.read(cache_key)['access_token']
+        Rails.cache.read(cache_key)["access_token"]
       else
-        @token_info['access_token']
+        @token_info["access_token"]
       end
     end
 
     def token_expired?
-      token_info = if defined?(Rails) && Rails.respond_to?(:cache)
-                    Rails.cache.read(cache_key)
-                  else
-                    @token_info
-                  end
+      token_info =
+        if defined?(Rails) && Rails.respond_to?(:cache)
+          Rails.cache.read(cache_key)
+        else
+          @token_info
+        end
 
       return true if token_info.nil?
 
       # Add a buffer of 6 minutes
-      Time.now.utc.to_i >= (token_info['expires'] - 360)
+      Time.now.utc.to_i >= (token_info["expires"] - 360)
     end
 
     def handle_access_token_response(response)
@@ -137,6 +142,5 @@ module NinjaVanAPI
 
       "#{endpoint}/#{country_code.downcase}"
     end
-
   end
 end
