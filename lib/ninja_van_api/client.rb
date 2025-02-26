@@ -30,8 +30,7 @@ module NinjaVanAPI
           # access_token will be evaluated on each request using proc
           conn.request :authorization, :Bearer, -> { access_token }
           conn.request :json
-          conn.response :json
-          conn.response :raise_error # Raises error on 4xx and 5xx responses
+          conn.response :json, content_type: "application/json"
         end
     end
 

@@ -12,10 +12,38 @@
 # the additional setup, and require it from the spec files that actually need
 # it.
 
-require 'ninja_van_api'
+require "ninja_van_api"
+require "pry"
+require "webmock/rspec"
+
+WebMock.disable_net_connect!
+
+RSpec.shared_context "oauth_token_stub" do
+  before do
+    stub_request(:post, "https://api-sandbox.ninjavan.co/sg/2.0/oauth/access_token").with(
+      body: {
+        client_id: "test_client_id",
+        client_secret: "test_client_secret",
+        grant_type: "client_credentials",
+      }.to_json,
+      headers: {
+        "Content-Type" => "application/json",
+      },
+    ).to_return(
+      status: 200,
+      body: { access_token: "test_access_token", expires_in: 3600 }.to_json,
+      headers: {
+        "Content-Type" => "application/json",
+      },
+    )
+  end
+end
 
 # See https://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
+  # Include the OAuth token stub for all test cases
+  config.include_context "oauth_token_stub", type: :request
+
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.
@@ -46,8 +74,8 @@ RSpec.configure do |config|
   # triggering implicit auto-inclusion in groups with matching metadata.
   config.shared_context_metadata_behavior = :apply_to_host_groups
 
-# The settings below are suggested to provide a good initial experience
-# with RSpec, but feel free to customize to your heart's content.
+  # The settings below are suggested to provide a good initial experience
+  # with RSpec, but feel free to customize to your heart's content.
 =begin
   # This allows you to limit a spec run to individual examples or groups
   # you care about by tagging them with `:focus` metadata. When nothing
