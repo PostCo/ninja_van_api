@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-RSpec.describe NinjaVanAPI::OrderResource, type: :request do
+RSpec.describe NinjaVanApi::OrderResource, type: :request do
   let(:client) do
-    NinjaVanAPI::Client.new(
+    NinjaVanApi::Client.new(
       client_id: "test_client_id",
       client_secret: "test_client_secret",
       country_code: "SG",
@@ -122,7 +122,7 @@ RSpec.describe NinjaVanAPI::OrderResource, type: :request do
       it "creates an order and returns an Order object" do
         order = subject.create(order_params)
 
-        expect(order).to be_a(NinjaVanAPI::Order)
+        expect(order).to be_a(NinjaVanApi::Order)
         expect(order.tracking_number).to eq("NINJA123")
         expect(order.service_type).to eq("Parcel")
         expect(order.service_level).to eq("Standard")
@@ -141,7 +141,7 @@ RSpec.describe NinjaVanAPI::OrderResource, type: :request do
       end
 
       it "raises the error" do
-        expect { subject.create(order_params) }.to raise_error(NinjaVanAPI::Error)
+        expect { subject.create(order_params) }.to raise_error(NinjaVanApi::Error)
       end
     end
   end
@@ -164,7 +164,7 @@ RSpec.describe NinjaVanAPI::OrderResource, type: :request do
       it "cancels the order and returns an Order object" do
         order = subject.cancel(tracking_number)
 
-        expect(order).to be_a(NinjaVanAPI::Order)
+        expect(order).to be_a(NinjaVanApi::Order)
         expect(order.tracking_number).to eq("NINJA123")
         expect(order.status).to eq("cancelled")
       end
@@ -182,7 +182,7 @@ RSpec.describe NinjaVanAPI::OrderResource, type: :request do
       end
 
       it "raises the error" do
-        expect { subject.cancel(tracking_number) }.to raise_error(NinjaVanAPI::Error)
+        expect { subject.cancel(tracking_number) }.to raise_error(NinjaVanApi::Error)
       end
     end
   end

@@ -1,11 +1,11 @@
-module NinjaVanAPI
+module NinjaVanApi
   class WebhooksController < ActionController::Base
     protect_from_forgery with: :null_session
     before_action :verify_webhook_signature
 
     def create
-      if NinjaVanAPI.configuration.webhook_job_class
-        NinjaVanAPI.configuration.webhook_job_class.perform_later(webhook_params.to_h)
+      if NinjaVanApi.configuration.webhook_job_class
+        NinjaVanApi.configuration.webhook_job_class.perform_later(webhook_params.to_h)
         head :ok
       else
         head :unprocessable_entity
@@ -24,7 +24,7 @@ module NinjaVanAPI
       country_code = request.path.split("/")[2]&.downcase
       return head :unauthorized unless country_code.present?
 
-      webhook_secret = NinjaVanAPI.configuration.get_webhook_secret(country_code)
+      webhook_secret = NinjaVanApi.configuration.get_webhook_secret(country_code)
       return head :unauthorized unless webhook_secret
 
       signature = request.headers["X-Ninjavan-Hmac-Sha256"]

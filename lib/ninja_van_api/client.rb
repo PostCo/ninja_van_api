@@ -1,7 +1,7 @@
 require "faraday"
 require "faraday/net_http"
 
-module NinjaVanAPI
+module NinjaVanApi
   class Client
     BASE_URL = "https://api.ninjavan.co".freeze
     SANDBOX_BASE_URL = "https://api-sandbox.ninjavan.co".freeze
@@ -43,11 +43,11 @@ module NinjaVanAPI
     def validate_country_code
       if test_mode
         if country_code != "SG"
-          raise NinjaVanAPI::UnsupportedCountryCodeError, "#{country_code} is not supported on test mode"
+          raise NinjaVanApi::UnsupportedCountryCodeError, "#{country_code} is not supported on test mode"
         end
       else
         unless SUPPORTED_COUNTRY_CODES.include? country_code
-          raise NinjaVanAPI::UnsupportedCountryCodeError, "#{country_code} is not supported"
+          raise NinjaVanApi::UnsupportedCountryCodeError, "#{country_code} is not supported"
         end
       end
     end
@@ -121,7 +121,7 @@ module NinjaVanAPI
     end
 
     def handle_access_token_response(response)
-      raise NinjaVanAPI::AuthenticationError unless response.success?
+      raise NinjaVanApi::AuthenticationError unless response.success?
 
       token_info = JSON.parse(response.body)
 

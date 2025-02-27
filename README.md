@@ -1,4 +1,4 @@
-# NinjaVanAPI
+# NinjaVanApi
 
 A Ruby gem for integrating with NinjaVan's API and handling webhooks in Rails applications.
 
@@ -23,9 +23,9 @@ In your Rails application's `config/routes.rb`, mount the webhook engine. You ca
 ```ruby
 Rails.application.routes.draw do
   # Mount multiple endpoints for different countries
-  mount NinjaVanAPI::Engine => '/ninja_van/my'
-  mount NinjaVanAPI::Engine => '/ninja_van/sg'
-  mount NinjaVanAPI::Engine => '/ninja_van/id'
+  mount NinjaVanApi::Engine => '/ninja_van/my'
+  mount NinjaVanApi::Engine => '/ninja_van/sg'
+  mount NinjaVanApi::Engine => '/ninja_van/id'
 end
 ```
 
@@ -34,7 +34,7 @@ end
 Create an initializer in `config/initializers/ninja_van_api.rb`. When configuring webhook secrets, you'll need to provide a hash where each key is a country code that corresponds to your mounting paths:
 
 ```ruby
-NinjaVanAPI.configure do |config|
+NinjaVanApi.configure do |config|
   # Set your webhook job class to process incoming webhooks
   config.webhook_job_class = "NinjaVanWebhookJob"
 

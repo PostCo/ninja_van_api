@@ -3,15 +3,10 @@
 require "rails"
 require_relative "ninja_van_api/version"
 
-module NinjaVanAPI
+module NinjaVanApi
   class Engine < ::Rails::Engine
     engine_name "ninja_van_api"
-    isolate_namespace NinjaVanAPI
-
-    initializer "ninja_van_api.inflections" do
-      ActiveSupport::Inflector.inflections(:en) { |inflect| inflect.acronym "NinjaVanAPI" }
-      Rails.autoloaders.main.inflector.inflect("ninja_van_api" => "NinjaVanAPI")
-    end
+    isolate_namespace NinjaVanApi
   end
 
   # Objects
@@ -21,9 +16,6 @@ module NinjaVanAPI
   # Resources
   autoload :BaseResource, "ninja_van_api/resources/base_resource"
   autoload :OrderResource, "ninja_van_api/resources/order_resource"
-
-  # Controllers
-  autoload :WebhooksController, "../app/controllers/ninja_van_api/webhooks_controller"
 
   # Core components
   autoload :Client, "ninja_van_api/client"
