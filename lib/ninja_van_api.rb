@@ -1,8 +1,13 @@
 # frozen_string_literal: true
 
+require "rails"
 require_relative "ninja_van_api/version"
 
 module NinjaVanAPI
+  class Engine < ::Rails::Engine
+    isolate_namespace NinjaVanAPI
+  end
+
   # Objects
   autoload :Base, "ninja_van_api/objects/base"
   autoload :Order, "ninja_van_api/objects/order"
