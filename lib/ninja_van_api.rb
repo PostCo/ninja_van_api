@@ -9,6 +9,8 @@ module NinjaVanApi
     isolate_namespace NinjaVanApi
   end
 
+  require "ninja_van_api/configuration"
+
   # Objects
   autoload :Base, "ninja_van_api/objects/base"
   autoload :Order, "ninja_van_api/objects/order"
@@ -16,8 +18,6 @@ module NinjaVanApi
   # Resources
   autoload :BaseResource, "ninja_van_api/resources/base_resource"
   autoload :OrderResource, "ninja_van_api/resources/order_resource"
-
-  autoload :Configuration, "ninja_van_api/configuration"
 
   # Core components
   autoload :Client, "ninja_van_api/client"
