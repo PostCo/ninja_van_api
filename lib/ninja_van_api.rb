@@ -7,6 +7,10 @@ module NinjaVanAPI
   class Engine < ::Rails::Engine
     engine_name "ninja_van_api"
     isolate_namespace NinjaVanAPI
+
+    initializer "ninja_van_api.inflections" do
+      Rails.autoloaders.main.inflector.inflect("ninja_van_api" => "NinjaVanAPI")
+    end
   end
 
   # Objects
@@ -18,7 +22,7 @@ module NinjaVanAPI
   autoload :OrderResource, "ninja_van_api/resources/order_resource"
 
   # Controllers
-  autoload :WebhookController, "../app/controllers/ninja_van_api/webhook_controller"
+  # autoload :WebhookController, "../app/controllers/ninja_van_api/webhook_controller"
 
   # Core components
   autoload :Client, "ninja_van_api/client"
