@@ -4,7 +4,7 @@ require "active_support"
 require "active_support/core_ext/string"
 require "ostruct"
 
-module NinjaVanAPI
+module NinjaVanApi
   class Base < OpenStruct
     def initialize(attributes)
       super to_ostruct(attributes)

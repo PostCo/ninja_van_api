@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module NinjaVanAPI
+module NinjaVanApi
   class Order < Base
   end
 end

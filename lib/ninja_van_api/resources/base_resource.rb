@@ -3,7 +3,7 @@
 require "active_support"
 require "active_support/core_ext/string"
 
-module NinjaVanAPI
+module NinjaVanApi
   class BaseResource
     attr_reader :client
 

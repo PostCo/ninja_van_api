@@ -1,6 +1,9 @@
-module NinjaVanAPI
-  class Error < StandardError; end
+module NinjaVanApi
+  class Error < StandardError
+  end
 
-  class UnsupportedCountryCodeError < Error; end
-  class AuthenticationError < Error; end
+  class UnsupportedCountryCodeError < Error
+  end
+  class AuthenticationError < Error
+  end
 end

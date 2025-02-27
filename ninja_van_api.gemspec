@@ -4,7 +4,7 @@ require_relative "lib/ninja_van_api/version"
 
 Gem::Specification.new do |spec|
   spec.name = "ninja_van_api"
-  spec.version = NinjaVanAPI::VERSION
+  spec.version = NinjaVanApi::VERSION
   spec.authors = ["Jane Trang Mai Nguyen"]
   spec.email = ["jane.trangm@gmail.com"]
 

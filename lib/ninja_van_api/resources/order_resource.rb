@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module NinjaVanAPI
+module NinjaVanApi
   class OrderResource < BaseResource
     def create(params = {})
       response = post_request("4.2/orders", body: params)

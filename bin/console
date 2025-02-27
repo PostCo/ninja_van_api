@@ -1,17 +1,17 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require 'bundler/setup'
-require 'ninja_van_api'
-require 'dotenv/load'
+require "bundler/setup"
+require "ninja_van_api"
+require "dotenv/load"
 
 # You can add fixtures and/or initialization code here to make experimenting
 # with your gem easier. You can also use a different console, if you like.
-client_id = ENV['CLIENT_ID']
-client_secret = ENV['CLIENT_SECRET']
-@client = NinjaVanAPI::Client.new(client_id: client_id, client_secret: client_secret, test_mode: true)
-puts 'A client is created for testing purpose'
+client_id = ENV["CLIENT_ID"]
+client_secret = ENV["CLIENT_SECRET"]
+@client = NinjaVanApi::Client.new(client_id: client_id, client_secret: client_secret, test_mode: true)
+puts "A client is created for testing purpose"
 
-require 'pry'
-require 'irb'
+require "pry"
+require "irb"
 IRB.start(__FILE__)
