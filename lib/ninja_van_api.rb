@@ -23,7 +23,7 @@ module NinjaVanAPI
   autoload :OrderResource, "ninja_van_api/resources/order_resource"
 
   # Controllers
-  # autoload :WebhookController, "../app/controllers/ninja_van_api/webhook_controller"
+  autoload :WebhooksController, "../app/controllers/ninja_van_api/webhooks_controller"
 
   # Core components
   autoload :Client, "ninja_van_api/client"
