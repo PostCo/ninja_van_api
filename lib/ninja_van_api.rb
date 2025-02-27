@@ -4,7 +4,11 @@ require "rails"
 require_relative "ninja_van_api/version"
 
 module NinjaVanAPI
-  autoload :Engine, "ninja_van_api/engine"
+  class Engine < ::Rails::Engine
+    engine_name "ninja_van_api"
+    isolate_namespace NinjaVanAPI
+  end
+
   # Objects
   autoload :Base, "ninja_van_api/objects/base"
   autoload :Order, "ninja_van_api/objects/order"
