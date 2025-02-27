@@ -126,7 +126,7 @@ module NinjaVanAPI
       token_info = JSON.parse(response.body)
 
       if defined?(Rails) && Rails.respond_to?(:cache)
-        Rails.cache.write(cache_key, token_info)
+        Rails.cache.write(cache_key, token_info, expires_in: token_info["expires_in"])
       else
         @token_info = token_info
       end
