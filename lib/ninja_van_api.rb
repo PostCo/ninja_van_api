@@ -16,6 +16,9 @@ module NinjaVanAPI
   autoload :BaseResource, "ninja_van_api/resources/base_resource"
   autoload :OrderResource, "ninja_van_api/resources/order_resource"
 
+  # Controllers
+  autoload :WebhookController, "ninja_van_api/webhook_controller"
+
   # Core components
   autoload :Client, "ninja_van_api/client"
   autoload :Error, "ninja_van_api/error"
