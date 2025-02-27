@@ -6,7 +6,8 @@
 #
 module NinjaVanApi
   class Configuration
-    attr_reader :webhook_secrets, :webhook_job_class
+    attr_reader :webhook_secrets
+    attr_accessor :webhook_job_class
 
     def webhook_secrets=(secrets)
       @webhook_secrets = secrets.transform_keys(&:downcase)
@@ -14,20 +15,6 @@ module NinjaVanApi
 
     def get_webhook_secret(country_code)
       @webhook_secrets[country_code.to_s.downcase]
-    end
-
-    def webhook_job_class=(job_class)
-      return @webhook_job_class = nil if job_class.nil?
-
-      begin
-        klass = job_class.is_a?(String) ? job_class.constantize : job_class
-      rescue NameError
-        raise ArgumentError, "webhook_job_class must be an ActiveJob class name or class that responds to perform_later"
-      end
-      unless klass.is_a?(Class) && klass.respond_to?(:perform_later)
-        raise ArgumentError, "webhook_job_class must be an ActiveJob class name or class that responds to perform_later"
-      end
-      @webhook_job_class = klass
     end
   end
 

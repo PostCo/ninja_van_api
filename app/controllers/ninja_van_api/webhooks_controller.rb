@@ -5,7 +5,14 @@ module NinjaVanApi
 
     def create
       if NinjaVanApi.configuration.webhook_job_class
-        NinjaVanApi.configuration.webhook_job_class.perform_later(webhook_params.to_h)
+        klass =
+          begin
+            job_class.constantize
+          rescue NameError
+            raise ArgumentError,
+                  "webhook_job_class must be an ActiveJob class name or class that responds to perform_later"
+          end
+        klass.perform_later(webhook_params.to_h)
         head :ok
       else
         head :unprocessable_entity
