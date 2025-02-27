@@ -1,3 +1,5 @@
 NinjaVanAPI::Engine.routes.draw do
-  post '/webhooks', to: 'webhook#create'
+  controller :webhooks do
+    post "/" => :create
+  end
 end

@@ -8,10 +8,12 @@ module NinjaVanAPI
     engine_name "ninja_van_api"
     isolate_namespace NinjaVanAPI
 
-    # initializer "ninja_van_api.inflections" do
-    #   ActiveSupport::Inflector.inflections(:en) { |inflect| inflect.acronym "NinjaVanAPI" }
-    #   Rails.autoloaders.main.inflector.inflect("ninja_van_api" => "NinjaVanAPI")
-    # end
+    initializer "ninja_van_api.inflections" do
+      ActiveSupport::Inflector.inflections(:en) do |inflect|
+        inflect.acronym "API"
+        inflect.acronym "NinjaVan"
+      end
+    end
   end
 
   # Objects
