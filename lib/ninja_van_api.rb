@@ -14,10 +14,12 @@ module NinjaVanApi
   # Objects
   autoload :Base, "ninja_van_api/objects/base"
   autoload :Order, "ninja_van_api/objects/order"
+  autoload :Waybill, "ninja_van_api/objects/waybill"
 
   # Resources
   autoload :BaseResource, "ninja_van_api/resources/base_resource"
   autoload :OrderResource, "ninja_van_api/resources/order_resource"
+  autoload :WaybillResource, "ninja_van_api/resources/waybill_resource"
 
   # Core components
   autoload :Client, "ninja_van_api/client"

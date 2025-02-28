@@ -38,6 +38,10 @@ module NinjaVanApi
       @orders ||= OrderResource.new(self)
     end
 
+    def waybills
+      @waybills ||= WaybillResource.new(self)
+    end
+
     private
 
     def validate_country_code
@@ -55,7 +59,7 @@ module NinjaVanApi
     def access_token
       fetch_access_token if token_expired?
 
-      if defined?(Rails) && Rails.respond_to?(:cache)
+      if defined?(Rails) && Rails.respond_to?(:cache) && Rails.cache
         Rails.cache.read(cache_key)["access_token"]
       else
         @token_info["access_token"]
@@ -64,7 +68,7 @@ module NinjaVanApi
 
     def refresh_access_token
       @token_info = nil
-      Rails.cache.delete(cache_key) if defined?(Rails) && Rails.respond_to?(:cache)
+      Rails.cache.delete(cache_key) if defined?(Rails) && Rails.respond_to?(:cache) && Rails.cache
       fetch_access_token
     end
 
@@ -99,7 +103,7 @@ module NinjaVanApi
     def access_token
       fetch_access_token if token_expired?
 
-      if defined?(Rails) && Rails.respond_to?(:cache)
+      if defined?(Rails) && Rails.respond_to?(:cache) && Rails.cache
         Rails.cache.read(cache_key)["access_token"]
       else
         @token_info["access_token"]
@@ -108,7 +112,7 @@ module NinjaVanApi
 
     def token_expired?
       token_info =
-        if defined?(Rails) && Rails.respond_to?(:cache)
+        if defined?(Rails) && Rails.respond_to?(:cache) && Rails.cache
           Rails.cache.read(cache_key)
         else
           @token_info
@@ -125,7 +129,7 @@ module NinjaVanApi
 
       token_info = JSON.parse(response.body)
 
-      if defined?(Rails) && Rails.respond_to?(:cache)
+      if defined?(Rails) && Rails.respond_to?(:cache) && Rails.cache
         Rails.cache.write(cache_key, token_info, expires_in: token_info["expires_in"])
       else
         @token_info = token_info
