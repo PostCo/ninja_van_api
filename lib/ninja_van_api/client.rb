@@ -86,17 +86,6 @@ module NinjaVanApi
             }.to_json
           end
 
-      raise NinjaVanApi::AuthenticationError, response.body unless response.success?
-
-      JSON.parse(response.body)["access_token"]
-
-      response =
-        Faraday.post(endpoint) do |req|
-          req.headers["Content-Type"] = "application/json"
-          req.headers["Accept"] = "application/json"
-          req.body = { client_id: @client_id, client_secret: @client_secret, grant_type: "client_credentials" }.to_json
-        end
-
       handle_access_token_response(response)
     end
 
