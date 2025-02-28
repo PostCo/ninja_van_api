@@ -10,11 +10,11 @@ module NinjaVanApi
     attr_accessor :webhook_job_class
 
     def webhook_secrets=(secrets)
-      @webhook_secrets = secrets.transform_keys(&:downcase)
+      @webhook_secrets = secrets.transform_keys { |key| key.to_sym.downcase }
     end
 
     def get_webhook_secret(country_code)
-      @webhook_secrets[country_code.to_s.downcase]
+      @webhook_secrets[country_code.to_sym.downcase]
     end
   end
 

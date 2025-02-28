@@ -7,11 +7,12 @@ module NinjaVanApi
       if NinjaVanApi.configuration.webhook_job_class
         klass =
           begin
-            job_class.constantize
+            NinjaVanApi.configuration.webhook_job_class.constantize
           rescue NameError
             raise ArgumentError,
                   "webhook_job_class must be an ActiveJob class name or class that responds to perform_later"
           end
+
         klass.perform_later(webhook_params.to_h)
         head :ok
       else
@@ -27,8 +28,8 @@ module NinjaVanApi
 
     def verify_webhook_signature
       # Extract country code from the request path
-      # Example: /ninjavan/sg/webhooks -> 'sg'
-      country_code = request.path.split("/")[2]&.downcase
+      # Example: /sg -> 'sg'
+      country_code = request.path.split("/")[-1]&.downcase
       return head :unauthorized unless country_code.present?
 
       webhook_secret = NinjaVanApi.configuration.get_webhook_secret(country_code)

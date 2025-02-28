@@ -12,9 +12,19 @@
 # the additional setup, and require it from the spec files that actually need
 # it.
 
+require "action_controller/railtie"
+require "rspec/rails"
 require "ninja_van_api"
 require "pry"
 require "webmock/rspec"
+
+Rails.application =
+  Class.new(Rails::Application) do
+    config.eager_load = false
+    config.active_support.deprecation = :stderr
+    config.secret_key_base = "test_key_base"
+  end
+Rails.application.initialize!
 
 WebMock.disable_net_connect!
 

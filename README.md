@@ -16,6 +16,38 @@ And then execute:
 
 ## Usage
 
+### Retrieving Waybills
+
+```ruby
+# Initialize the client
+client = NinjaVanApi::Client.new(
+  client_id: "your_client_id",
+  client_secret: "your_client_secret",
+  country_code: "SG",
+  test_mode: true
+)
+
+# Basic waybill retrieval
+waybill = client.waybills.get("TRACKING123")
+
+# Get waybill with optional parameters
+waybill = client.waybills.get(
+  "TRACKING123",
+  hide_shipper_details: true,  # Hide shipper's details in the waybill
+  orientation: "landscape"     # Set waybill orientation to landscape
+)
+
+# Access the PDF content
+pdf_content = waybill.pdf
+
+# Error handling
+begin
+  waybill = client.waybills.get("INVALID_TRACKING")
+rescue NinjaVanApi::Error => e
+  puts "Error retrieving waybill: #{e.message}"
+end
+```
+
 ### Mounting the Engine
 
 In your Rails application's `config/routes.rb`, mount the webhook engine. You can mount it multiple times with different country paths. For example:
