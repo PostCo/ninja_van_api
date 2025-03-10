@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require "active_support"
-require "active_support/core_ext/string"
-require "ostruct"
+require 'active_support'
+require 'active_support/core_ext/string'
+require 'ostruct'
 
 module NinjaVanApi
   class Base < OpenStruct
