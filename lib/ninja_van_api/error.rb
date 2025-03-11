@@ -6,4 +6,7 @@ module NinjaVanApi
   end
   class AuthenticationError < Error
   end
+
+  class CacheNotDefinedError < Error
+  end
 end

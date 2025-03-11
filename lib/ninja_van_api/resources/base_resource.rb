@@ -44,7 +44,7 @@ module NinjaVanApi
       when 400
         raise Error, "A bad request or a validation exception has occurred. #{error_message}"
       when 401
-        if retry_count.zero?
+        if !(Rails.env.development? || Rails.env.test?) && retry_count.zero?
           # Force token refresh and retry the request once
           client.refresh_access_token
           return retry_request(response.env, retry_count + 1)

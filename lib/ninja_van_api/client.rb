@@ -15,9 +15,6 @@ module NinjaVanApi
       @country_code = country_code
       @test_mode = test_mode
       @conn_opts = conn_opts
-      if defined?(Rails) && Rails.env.development?
-        @token_info = { "access_token" => ENV["NINJAVAN_API_ACCESS_TOKEN"], "expires" => Time.now.utc.to_i + 3600 }
-      end
 
       validate_country_code
     end
@@ -42,6 +39,11 @@ module NinjaVanApi
       @waybills ||= WaybillResource.new(self)
     end
 
+    def refresh_access_token
+      Rails.cache.delete(cache_key)
+      fetch_access_token
+    end
+
     private
 
     def validate_country_code
@@ -57,19 +59,14 @@ module NinjaVanApi
     end
 
     def access_token
+      if Rails.env.development?
+        Rails.logger.debug "Access token might be expired. You can refetch the token by calling NinjaVanApi::Client#refresh_access_token. Make sure update the ENV variable NINJAVAN_API_ACCESS_TOKEN"
+        return { "access_token" => ENV.fetch("NINJAVAN_API_ACCESS_TOKEN") }
+      end
+
       fetch_access_token if token_expired?
 
-      if defined?(Rails) && Rails.respond_to?(:cache) && Rails.cache
-        Rails.cache.read(cache_key)["access_token"]
-      else
-        @token_info["access_token"]
-      end
-    end
-
-    def refresh_access_token
-      @token_info = nil
-      Rails.cache.delete(cache_key) if defined?(Rails) && Rails.respond_to?(:cache) && Rails.cache
-      fetch_access_token
+      Rails.cache.read(cache_key)["access_token"]
     end
 
     def fetch_access_token
@@ -89,23 +86,8 @@ module NinjaVanApi
       handle_access_token_response(response)
     end
 
-    def access_token
-      fetch_access_token if token_expired?
-
-      if defined?(Rails) && Rails.respond_to?(:cache) && Rails.cache
-        Rails.cache.read(cache_key)["access_token"]
-      else
-        @token_info["access_token"]
-      end
-    end
-
     def token_expired?
-      token_info =
-        if defined?(Rails) && Rails.respond_to?(:cache) && Rails.cache
-          Rails.cache.read(cache_key)
-        else
-          @token_info
-        end
+      token_info = Rails.cache.read(cache_key)
 
       return true if token_info.nil?
 
@@ -117,12 +99,8 @@ module NinjaVanApi
       raise NinjaVanApi::AuthenticationError unless response.success?
 
       token_info = JSON.parse(response.body)
-
-      if defined?(Rails) && Rails.respond_to?(:cache) && Rails.cache
-        Rails.cache.write(cache_key, token_info, expires_in: token_info["expires_in"])
-      else
-        @token_info = token_info
-      end
+      Rails.cache.write(cache_key, token_info, expires_in: token_info["expires_in"])
+      cache_key
     end
 
     def cache_key
