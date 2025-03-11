@@ -183,13 +183,109 @@ The webhook endpoints will be available at your specified paths (e.g., `/ninja_v
 
 ## Development
 
+### Setup
+
 After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+
+### Environment Variables
+
+For development purposes only, create a `.env` file in the root directory with a NinjaVan API access token:
+
+```
+NINJAVAN_API_ACCESS_TOKEN=00000000000
+```
+
+This token is used exclusively in development to prevent hitting NinjaVan's API request limits. When the token expires:
+
+1. Open the console:
+
+   ```
+   bin/console
+   ```
+
+2. Refresh the token:
+
+   ```ruby
+   # Intialize the client
+   client = NinjaVanApi::Client.new(
+     client_id: ENV["CLIENT_ID"],
+     client_secret: ENV["CLIENT_SECRET"],
+     country_code: "SG",
+     test_mode: true,
+   )
+
+   # Refresh the token
+   client.refresh_access_token # => "new_access_token"
+   ```
+
+3. Update your `.env` file with the new token
+
+4. Restart your application
+
+Note: These environment variables are automatically loaded when you run `bin/console`. For production, ensure your client credentials (CLIENT_ID and CLIENT_SECRET) are securely set in your deployment environment.
+
+### Authorization Issues
+
+The gem handles token management automatically, including:
+
+- Initial token acquisition
+- Automatic token refresh when expired
+- Retry mechanisms for failed requests
+
+If you encounter authorization issues:
+
+1. Verify your credentials:
+
+   - Check if CLIENT_ID and CLIENT_SECRET are correct
+   - Ensure credentials haven't been revoked by NinjaVan
+
+2. Debug token issues:
+
+   - The gem automatically refreshes expired tokens
+   - Check your application logs for token-related errors
+   - Verify your system clock is synchronized (important for token validation)
+
+3. Environment-specific troubleshooting:
+   - Development: Update your .env file with new credentials if needed
+   - Production: Safely update credentials in your environment
+   - Always restart your application after credential updates
+
+### Testing
+
+When testing your integration, it's recommended to stub the API requests. Here's an example using RSpec and WebMock:
+
+```ruby
+require 'webmock/rspec'
+
+RSpec.describe YourService do
+  let(:client) { NinjaVanApi::Client.new(client_id: 'test', client_secret: 'test', country_code: 'SG', test_mode: true) }
+
+  before do
+    # Stub authentication request
+    stub_request(:post, "https://api.ninjavan.co/SG/2.0/oauth/access_token")
+      .to_return(status: 200, body: { access_token: 'test_token' }.to_json)
+
+    # Stub API request
+    stub_request(:post, "https://api-sandbox.ninjavan.co/SG/4.2/orders")
+      .with(headers: { 'Authorization' => 'Bearer test_token', 'Content-Type' => 'application/json' })
+      .to_return(status: 200, body: { tracking_number: 'TEST123' }.to_json, headers: { 'Content-Type' => 'application/json' })
+  end
+
+  it 'retrieves order information' do
+    order_params = {}
+    response = client.orders.create(order_params)
+    expect(response.tracking_number).to eq('TEST123')
+  end
+end
+```
+
+### Installation
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/ninja_van_api. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/ninja_van_api/blob/main/CODE_OF_CONDUCT.md).
+Bug reports and pull requests are welcome on GitHub at https://github.com/PostCo/ninja_van_api. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/ninja_van_api/blob/main/CODE_OF_CONDUCT.md).
 
 ## License
 
