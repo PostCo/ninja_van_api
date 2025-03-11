@@ -120,7 +120,7 @@ RSpec.describe NinjaVanApi::OrderResource, type: :request do
       end
 
       it "creates an order and returns an Order object" do
-        order = subject.create(order_params)
+        order = subject.k(order_params)
 
         expect(order).to be_a(NinjaVanApi::Order)
         expect(order.tracking_number).to eq("NINJA123")

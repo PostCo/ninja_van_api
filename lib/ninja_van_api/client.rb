@@ -61,7 +61,7 @@ module NinjaVanApi
     def access_token
       if Rails.env.development?
         Rails.logger.debug "Access token might be expired. You can refetch the token by calling NinjaVanApi::Client#refresh_access_token. Make sure update the ENV variable NINJAVAN_API_ACCESS_TOKEN"
-        return { "access_token" => ENV.fetch("NINJAVAN_API_ACCESS_TOKEN") }
+        ENV.fetch("NINJAVAN_API_ACCESS_TOKEN")
       end
 
       fetch_access_token if token_expired?
@@ -99,7 +99,7 @@ module NinjaVanApi
 
       token_info = JSON.parse(response.body)
       Rails.cache.write(cache_key, token_info, expires_in: token_info["expires_in"])
-      cache_key
+      token_info["access_token"]
     end
 
     def cache_key
