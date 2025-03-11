@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ninja_van_api (0.3.2)
+    ninja_van_api (0.3.3)
       faraday (~> 2.7.10)
       faraday-encoding
       faraday-net_http

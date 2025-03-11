@@ -110,7 +110,7 @@ RSpec.describe NinjaVanApi::OrderResource, type: :request do
 
     context "when the API call is successful" do
       before do
-        stub_request(:post, "#{base_url}/4.2/orders").with(body: order_params).to_return(
+        stub_request(:post, "#{base_url}/sg/4.2/orders").with(body: order_params).to_return(
           status: 200,
           body: response_body.to_json,
           headers: {
@@ -131,7 +131,7 @@ RSpec.describe NinjaVanApi::OrderResource, type: :request do
 
     context "when the API call fails" do
       before do
-        stub_request(:post, "#{base_url}/4.2/orders").with(body: order_params).to_return(
+        stub_request(:post, "#{base_url}/sg/4.2/orders").with(body: order_params).to_return(
           status: 500,
           body: { error: "API Error" }.to_json,
           headers: {
@@ -152,7 +152,7 @@ RSpec.describe NinjaVanApi::OrderResource, type: :request do
 
     context "when the API call is successful" do
       before do
-        stub_request(:delete, "#{base_url}/2.2/orders/NINJA123").to_return(
+        stub_request(:delete, "#{base_url}/sg/2.2/orders/NINJA123").to_return(
           status: 200,
           body: response_body.to_json,
           headers: {
@@ -172,7 +172,7 @@ RSpec.describe NinjaVanApi::OrderResource, type: :request do
 
     context "when the API call fails" do
       before do
-        stub_request(:delete, "#{base_url}/2.2/orders/NINJA123").to_return(
+        stub_request(:delete, "#{base_url}/sg/2.2/orders/NINJA123").to_return(
           status: 500,
           body: { error: "API Error" }.to_json,
           headers: {

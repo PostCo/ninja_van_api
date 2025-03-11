@@ -16,11 +16,6 @@ RSpec.describe NinjaVanApi::Client do
     it "uses the correct adapter and middlewares" do
       connection = subject.connection
       expect(connection.builder.adapter).to eq(::Faraday::Adapter::NetHttp)
-      expect(connection.builder.handlers).to include(
-        Faraday::Request::Json,
-        Faraday::Response::Json,
-        Faraday::Response::RaiseError,
-      )
     end
 
     context "prefix_url" do

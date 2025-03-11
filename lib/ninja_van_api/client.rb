@@ -90,7 +90,6 @@ module NinjaVanApi
       token_info = Rails.cache.read(cache_key)
 
       return true if token_info.nil?
-
       # Add a buffer of 6 minutes
       Time.now.utc.to_i >= (token_info["expires"] - 360)
     end

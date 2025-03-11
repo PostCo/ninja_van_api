@@ -18,6 +18,8 @@ require "ninja_van_api"
 require "pry"
 require "webmock/rspec"
 
+Rails.env = "test"
+
 Rails.application =
   Class.new(Rails::Application) do
     config.eager_load = false
@@ -41,7 +43,7 @@ RSpec.shared_context "oauth_token_stub" do
       },
     ).to_return(
       status: 200,
-      body: { access_token: "test_access_token", expires_in: 3600 }.to_json,
+      body: { access_token: "test_access_token", expires_in: 1.day.to_i, expires: 1.day.from_now.to_i }.to_json,
       headers: {
         "Content-Type" => "application/json",
       },
