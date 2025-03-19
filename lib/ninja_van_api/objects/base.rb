@@ -19,5 +19,26 @@ module NinjaVanApi
         obj
       end
     end
+
+    # Convert back to hash without table key, including nested structures
+    def to_hash
+      ostruct_to_hash(self)
+    end
+
+    private
+
+    def ostruct_to_hash(object)
+      case object
+      when OpenStruct
+        hash = object.to_h.reject { |k, _| k == :table }
+        hash.transform_values { |value| ostruct_to_hash(value) }
+      when Array
+        object.map { |item| ostruct_to_hash(item) }
+      when Hash
+        object.transform_values { |value| ostruct_to_hash(value) }
+      else
+        object
+      end
+    end
   end
 end

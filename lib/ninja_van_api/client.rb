@@ -62,6 +62,9 @@ module NinjaVanApi
       if Rails.env.development?
         Rails.logger.debug "Access token might be expired. You can refetch the token by calling NinjaVanApi::Client#refresh_access_token. Make sure update the ENV variable NINJAVAN_API_ACCESS_TOKEN"
         return ENV.fetch("NINJAVAN_API_ACCESS_TOKEN")
+      elsif Rails.env.test?
+        Rails.logger.debug "Please use webmock to stub the access token"
+        return "test_token"
       end
 
       fetch_access_token if token_expired?
