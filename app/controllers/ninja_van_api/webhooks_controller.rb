@@ -1,6 +1,6 @@
 module NinjaVanApi
-  class WebhooksController < ActionController::Base
-    protect_from_forgery with: :null_session
+  class WebhooksController < ActionController::API
+    skip_before_action :verify_authenticity_token
     before_action :verify_webhook_signature
 
     def create
