@@ -47,14 +47,8 @@ module NinjaVanApi
     private
 
     def validate_country_code
-      if test_mode
-        if country_code != "SG"
-          raise NinjaVanApi::UnsupportedCountryCodeError, "#{country_code} is not supported on test mode"
-        end
-      else
-        unless SUPPORTED_COUNTRY_CODES.include? country_code
-          raise NinjaVanApi::UnsupportedCountryCodeError, "#{country_code} is not supported"
-        end
+      if SUPPORTED_COUNTRY_CODES.exclude?(country_code)
+        raise NinjaVanApi::UnsupportedCountryCodeError, "#{country_code} is not supported"
       end
     end
 
